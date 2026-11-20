@@ -1,0 +1,11 @@
+node_modules/
+dist/
+.env
+.env.local
+*.log
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+# mensagens recebidas pelo formulário (dados pessoais de visitantes)
+server/data/messages.json

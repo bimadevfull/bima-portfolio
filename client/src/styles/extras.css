@@ -1,0 +1,120 @@
+/* Estilos adicionados na versão React (o restante vem de styles.css, o CSS original). */
+
+/* Hover dos cards de serviço (antes feito via JS) */
+.service__card--hover:hover {
+  transform: translateY(-12px) scale(1.02);
+}
+
+.linkedin-profile-card:hover {
+  transform: translateY(-8px);
+}
+
+/* ===== Formulário de contato ===== */
+.contact__container--with-form {
+  max-width: var(--container-width);
+  grid-template-columns: 1fr 1.2fr;
+  align-items: start;
+}
+
+.contact__form {
+  display: grid;
+  gap: 1.2rem;
+  padding: 2rem;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius);
+  box-shadow: var(--shadow-primary);
+}
+
+.contact__form h3 {
+  font-family: var(--font-primary);
+  font-size: 1.1rem;
+  letter-spacing: 1px;
+  color: var(--primary-color);
+}
+
+.form__row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+.form__field {
+  display: grid;
+  gap: 0.4rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+}
+
+.form__field input,
+.form__field textarea {
+  width: 100%;
+  padding: 0.85rem 1rem;
+  font: inherit;
+  font-weight: 500;
+  color: var(--text-primary);
+  background: var(--bg-tertiary);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  transition: var(--transition);
+  resize: vertical;
+}
+
+.form__field input:focus,
+.form__field textarea:focus {
+  outline: none;
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 3px rgba(0, 184, 212, 0.2);
+}
+
+.contact__form .btn {
+  justify-self: start;
+  border: none;
+  cursor: pointer;
+}
+
+.contact__form .btn:disabled {
+  opacity: 0.6;
+  cursor: wait;
+}
+
+.form__honeypot {
+  position: absolute;
+  left: -9999px;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+}
+
+.form__status {
+  padding: 0.8rem 1rem;
+  border-radius: 8px;
+  font-weight: 600;
+}
+
+.form__status--success {
+  background: rgba(37, 211, 102, 0.12);
+  border: 1px solid var(--whatsapp-color);
+  color: var(--whatsapp-color);
+}
+
+.form__status--error {
+  background: rgba(255, 107, 53, 0.12);
+  border: 1px solid var(--marketing-color);
+  color: var(--marketing-color);
+}
+
+@media (max-width: 900px) {
+  .contact__container--with-form {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 560px) {
+  .form__row {
+    grid-template-columns: 1fr;
+  }
+  .contact__form {
+    padding: 1.4rem;
+  }
+}

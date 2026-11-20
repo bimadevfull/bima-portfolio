@@ -1,0 +1,781 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Dashboard Empresarial • Eficiência</title>
+  <meta name="description" content="Dashboard moderno e responsivo com gráficos interativos, cards informativos e histórico de atividades em tempo real para análises precisas." />
+  <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+  <style>
+    :root{
+      --bg:#0b0f14;
+      --bg-2:#0f1520;
+      --panel:#0f1520;
+      --panel-2:#121a26;
+      --panel-3:#0d1422;
+      --muted:#98a6bb;
+      --text:#e6edf3;
+      --brand:#4f8cff;
+      --accent:#22c55e;
+      --warn:#f59e0b;
+      --danger:#ef4444;
+      --border:#223147;
+      --chip:#1a2433;
+      --shadow: 0 10px 30px rgba(0,0,0,.35);
+    }
+
+    [data-theme="light"]{
+      --bg:#f6f7fb;
+      --bg-2:#ffffff;
+      --panel:#ffffff;
+      --panel-2:#f2f5fb;
+      --panel-3:#eef2fb;
+      --muted:#5d6b82;
+      --text:#0d1420;
+      --brand:#3b82f6;
+      --accent:#16a34a;
+      --warn:#d97706;
+      --danger:#dc2626;
+      --border:#dbe3ef;
+      --chip:#e8eefb;
+    }
+
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial, "Noto Sans";
+      background:
+        radial-gradient(1200px 600px at 20% -10%, rgba(79,140,255,.10), transparent 60%),
+        radial-gradient(1000px 600px at 100% 0%, rgba(79,140,255,.08), transparent 55%),
+        var(--bg);
+      color:var(--text);
+      line-height:1.45;
+    }
+
+    .muted{color:var(--muted)}
+    a{color:inherit;text-decoration:none}
+    button{font:inherit; color:inherit}
+    img{max-width:100%;display:block}
+
+    .wrapper{margin-left:260px; transition:margin-left .25s ease}
+    .sidebar{
+      position:fixed;left:0;top:0;bottom:0;width:260px;background:var(--panel-2);border-right:1px solid var(--border);
+      display:flex;flex-direction:column;justify-content:space-between;box-shadow:var(--shadow)
+    }
+    .side-head{display:flex;align-items:center;justify-content:space-between;padding:14px;border-bottom:1px solid var(--border)}
+    .brand{display:flex;gap:10px;align-items:center}
+    .brand-badge{
+      width:34px;height:34px;border-radius:10px;display:grid;place-items:center;font-weight:900;color:#0b0f14;
+      background: conic-gradient(from 180deg, #4f8cff, #22c55e, #f59e0b, #4f8cff);
+      box-shadow:0 6px 18px rgba(79,140,255,.35)
+    }
+    .brand-text{display:flex;flex-direction:column;line-height:1}
+    .menu{padding:8px}
+    .menu-item{display:flex;gap:10px;align-items:center;padding:10px 12px;border-radius:10px;color:var(--muted)}
+    .menu-item:hover{background:var(--panel-3);color:var(--text)}
+    .menu-item.active{background:linear-gradient(180deg, var(--brand), #316cff); color:white}
+    .side-foot{display:flex;align-items:center;justify-content:space-between;padding:12px;border-top:1px solid var(--border)}
+
+    .topbar{
+      position:sticky;top:0;z-index:40;background:linear-gradient(180deg, var(--panel), rgba(0,0,0,0));
+      border-bottom:1px solid var(--border); backdrop-filter: blur(10px);
+      display:flex;align-items:center;gap:12px;padding:12px 16px
+    }
+    .search{flex:1;display:flex;align-items:center;gap:8px;background:var(--panel-2);border:1px solid var(--border);padding:8px 12px;border-radius:12px}
+    .search input{flex:1;border:0;background:transparent;outline:0;color:inherit}
+    .toolbar{display:flex;align-items:center;gap:10px}
+    .chip-row{display:flex;gap:8px;flex-wrap:wrap}
+    .chip{background:var(--chip);border:1px solid var(--border);color:var(--muted);padding:6px 10px;border-radius:999px;cursor:pointer}
+    .chip.active{color:#fff;background:#1f2b3d;border-color:#2d4264}
+    .btn{border:1px solid var(--border);background:var(--panel-2);padding:8px 12px;border-radius:10px;cursor:pointer}
+    .btn.ghost{background:transparent}
+    .icon-btn{border:1px solid var(--border);background:transparent;border-radius:10px;padding:8px;cursor:pointer;color:var(--muted)}
+    .icon-btn:hover{color:var(--text);background:var(--panel-2)}
+
+    .content{max-width:1300px;margin:0 auto;padding:16px}
+    .section-title{margin:10px 0 8px 4px;color:var(--muted);font-size:13px;text-transform:uppercase;letter-spacing:.12em}
+
+    .kpi-grid{
+      display:grid;gap:14px;grid-template-columns:repeat(12,1fr)
+    }
+    .kpi{grid-column: span 12}
+    @media(min-width:620px){ .kpi{grid-column: span 6} }
+    @media(min-width:980px){ .kpi{grid-column: span 3} }
+
+    .card{
+      background:linear-gradient(180deg, var(--panel), var(--panel-2));
+      border:1px solid var(--border); border-radius:16px; padding:12px; box-shadow: var(--shadow)
+    }
+    .card-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
+    .kpi-row{display:flex;align-items:center;gap:10px}
+    .kpi-label{color:var(--muted);font-size:12px}
+    .kpi-value{font-size:24px;font-weight:800}
+    .kpi-delta{font-size:12px;margin-top:4px}
+    .kpi-delta.up{color:var(--accent)}
+    .kpi-delta.down{color:var(--danger)}
+
+    .grid{display:grid;gap:14px;grid-template-columns:repeat(12,1fr);margin-top:6px}
+
+    /* Chart boxes com altura estável */
+    .chart-box{width:100%; height:260px}
+    .chart-box.lg{height:360px}
+    .chart-box.md{height:280px}
+    .chart-box > canvas{width:100% !important; height:100% !important; display:block}
+
+    /* Lista de atividades */
+    .activity{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:8px;max-height:320px;overflow:auto}
+    .activity li{
+      display:flex;gap:10px;align-items:center;background:var(--panel-3);border:1px solid var(--border);border-radius:10px;padding:8px
+    }
+    .badge{
+      display:inline-flex;align-items:center;gap:6px;padding:4px 8px;border-radius:999px;border:1px solid var(--border);background:var(--panel-2);color:var(--muted);font-size:12px
+    }
+
+    .toast{
+      position:fixed;bottom:16px;left:50%;transform:translateX(-50%) translateY(20px);
+      background:var(--panel-3);border:1px solid var(--border);padding:10px 14px;border-radius:10px;box-shadow:var(--shadow);opacity:0;pointer-events:none;color:var(--text);
+      animation:toast .3s forwards
+    }
+    @keyframes toast{to{opacity:1;transform:translateX(-50%) translateY(0)}}
+
+    @media(max-width:900px){
+      .sidebar{transform:translateX(-100%); transition: transform .25s ease}
+      .sidebar.open{transform:translateX(0)}
+      .wrapper{margin-left:0}
+    }
+  </style>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+</head>
+<body>
+  <aside class="sidebar" id="sidebar">
+    <div class="side-head">
+      <div class="brand">
+        <span class="brand-badge">DE</span>
+        <div class="brand-text">
+          <strong>Dash Empresa</strong>
+          <span class="muted">Eficiência</span>
+        </div>
+      </div>
+      <button class="icon-btn" id="collapseSidebar" title="Recolher">
+        <svg width="18" height="18" viewBox="0 0 24 24"><path d="M15 6l-6 6 6 6" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+    </div>
+    <nav class="menu">
+      <a class="menu-item active" href="#"><span>Visão Geral</span></a>
+      <a class="menu-item" href="#"><span>Vendas</span></a>
+      <a class="menu-item" href="#"><span>Clientes</span></a>
+      <a class="menu-item" href="#"><span>Operações</span></a>
+      <a class="menu-item" href="#"><span>Configurações</span></a>
+    </nav>
+    <div class="side-foot">
+      <div class="foot-note">
+        <span class="muted">Sessão ativa</span>
+        <strong id="userName">Usuário</strong>
+      </div>
+      <button class="icon-btn" id="logoutBtn" title="Sair">
+        <svg width="18" height="18" viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+    </div>
+  </aside>
+
+  <div class="wrapper">
+    <header class="topbar">
+      <div class="search">
+        <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 20l-4.35-4.35M10.5 18a7.5 7.5 0 1 1 0-15 7.5 7.5 0 0 1 0 15Z" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round"/></svg>
+        <input id="searchInput" placeholder="Buscar indicadores, clientes, pedidos..." />
+      </div>
+      <div class="toolbar">
+        <div class="chip-row" id="rangeChips" role="tablist" aria-label="Intervalo">
+          <button class="chip active" data-range="1d">Hoje</button>
+          <button class="chip" data-range="7d">7 dias</button>
+          <button class="chip" data-range="30d">30 dias</button>
+          <button class="chip" data-range="90d">90 dias</button>
+        </div>
+        <button class="btn ghost" id="refreshBtn" title="Atualizar agora">
+          <svg width="16" height="16" viewBox="0 0 24 24"><path d="M20 7a8 8 0 1 0 2 5h-2a6 6 0 1 1-1.76-4.24L16 10h6V4l-2.34 2.34A9.97 9.97 0 0 0 12 2C6.48 2 2 6.48 2 12s4.48 10 10 10a10 10 0 0 0 9.95-9H20" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          Atualizar
+        </button>
+        <button class="btn" id="exportBtn" title="Exportar CSV">Exportar CSV</button>
+        <button class="icon-btn" id="themeToggle" title="Alternar tema">
+          <svg id="iconMoon" width="18" height="18" viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79Z" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <svg id="iconSun" width="18" height="18" viewBox="0 0 24 24" style="display:none"><circle cx="12" cy="12" r="4" stroke="currentColor" stroke-width="2" fill="none"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round"/></svg>
+        </button>
+      </div>
+    </header>
+
+    <main class="content">
+      <h2 class="section-title">KPIs</h2>
+      <section class="kpi-grid">
+        <div class="card kpi">
+          <div class="kpi-row">
+            <div>
+              <span class="kpi-label">Receita</span>
+              <div class="kpi-value" id="kpiRevenue">—</div>
+              <div class="kpi-delta" id="kpiRevenueDelta">—</div>
+            </div>
+            <canvas id="sparkRevenue" height="60"></canvas>
+          </div>
+        </div>
+        <div class="card kpi">
+          <div class="kpi-row">
+            <div>
+              <span class="kpi-label">Pedidos</span>
+              <div class="kpi-value" id="kpiOrders">—</div>
+              <div class="kpi-delta" id="kpiOrdersDelta">—</div>
+            </div>
+            <canvas id="sparkOrders" height="60"></canvas>
+          </div>
+        </div>
+        <div class="card kpi">
+          <div class="kpi-row">
+            <div>
+              <span class="kpi-label">Conversão</span>
+              <div class="kpi-value" id="kpiConv">—</div>
+              <div class="kpi-delta" id="kpiConvDelta">—</div>
+            </div>
+            <canvas id="sparkConv" height="60"></canvas>
+          </div>
+        </div>
+        <div class="card kpi">
+          <div class="kpi-row">
+            <div>
+              <span class="kpi-label">Ticket médio</span>
+              <div class="kpi-value" id="kpiTicket">—</div>
+              <div class="kpi-delta" id="kpiTicketDelta">—</div>
+            </div>
+            <canvas id="sparkTicket" height="60"></canvas>
+          </div>
+        </div>
+      </section>
+
+      <h2 class="section-title">Análises</h2>
+      <section class="grid">
+        <div class="card" style="grid-column: span 8;">
+          <div class="card-head">
+            <strong>Receita ao longo do tempo</strong>
+            <span class="muted" id="revSub">—</span>
+          </div>
+          <div class="chart-box lg">
+            <canvas id="chartRevenue"></canvas>
+          </div>
+        </div>
+        <div class="card" style="grid-column: span 4;">
+          <div class="card-head">
+            <strong>Métodos de pagamento</strong>
+            <span class="muted">Participação</span>
+          </div>
+          <div class="chart-box md">
+            <canvas id="chartPayments"></canvas>
+          </div>
+        </div>
+
+        <div class="card" style="grid-column: span 7;">
+          <div class="card-head">
+            <strong>Vendas por categoria</strong>
+            <span class="muted">Unidades</span>
+          </div>
+          <div class="chart-box md">
+            <canvas id="chartCategories"></canvas>
+          </div>
+        </div>
+        <div class="card" style="grid-column: span 5;">
+          <div class="card-head">
+            <strong>Indicadores operacionais</strong>
+            <span class="muted">Radar</span>
+          </div>
+          <div class="chart-box md">
+            <canvas id="chartOps"></canvas>
+          </div>
+        </div>
+      </section>
+
+      <h2 class="section-title">Atividades</h2>
+      <section class="grid">
+        <div class="card" style="grid-column: span 12;">
+          <div class="card-head">
+            <strong>Atividades recentes</strong>
+            <span class="muted" id="actCount">—</span>
+          </div>
+          <ul class="activity" id="activityList" aria-live="polite">
+            <!-- preenchido via JS -->
+          </ul>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <div id="toast" class="toast" style="display:none"></div>
+
+  <script>
+    // Utils e formatação
+    const fmtBRL = new Intl.NumberFormat('pt-BR', { style:'currency', currency:'BRL' });
+    const fmtPct  = new Intl.NumberFormat('pt-BR', { style:'percent', maximumFractionDigits:1 });
+    const el = (s, r=document)=> r.querySelector(s);
+    const els = (s, r=document)=> [...r.querySelectorAll(s)];
+    const toast = (msg)=> {
+      const t = el('#toast'); t.textContent = msg; t.style.display='block'; t.style.opacity='1';
+      setTimeout(()=>{ t.style.opacity='0'; setTimeout(()=> t.style.display='none', 300)}, 1800);
+    };
+
+    // Estado
+    const state = {
+      range: '1d',      // 1d | 7d | 30d | 90d
+      theme: localStorage.getItem('theme') || 'dark',
+      data: {
+        labels: [],
+        revenue: [],
+        orders: [],
+        conv: [],
+        ticket: [],
+        categories: [],
+        payments: [],
+        ops: []
+      },
+      charts: {}
+    };
+
+    // Helpers aleatórios
+    function rand(min,max){ return Math.random()*(max-min)+min; }
+    function randInt(min,max){ return Math.floor(rand(min,max+1)); }
+
+    // Labels temporais
+    function genLabels(len, unit='h'){
+      const now = new Date();
+      const lbls = [];
+      for(let i=len-1;i>=0;i--){
+        const d = new Date(now);
+        if (unit==='h') d.setHours(now.getHours()-i);
+        if (unit==='d') d.setDate(now.getDate()-i);
+        lbls.push(unit==='h' ? d.getHours().toString().padStart(2,'0') + 'h' : d.toLocaleDateString('pt-BR', { day:'2-digit', month:'2-digit'}));
+      }
+      return lbls;
+    }
+
+    // Série com média de retorno (evita quedas infinitas)
+    function meanRevertingSeries(len, start, targetBase, kappa=0.15, vol=0.08, floor=2000, ceil=30000){
+      const arr = [];
+      let v = start;
+      for (let i=0;i<len;i++){
+        const seasonal = 1 + 0.06*Math.sin(i/6) + 0.03*Math.cos(i/3);
+        const target = targetBase * seasonal;
+        const shock = (Math.random()-0.5)*vol*targetBase;
+        v = v + kappa*(target - v) + shock;
+        v = Math.max(floor, Math.min(ceil, v));
+        arr.push(Number(v.toFixed(2)));
+      }
+      return arr;
+    }
+
+    // Dados por range
+    function generateData(range){
+      const map = { '1d': {len:24, unit:'h'}, '7d':{len:7, unit:'d'}, '30d':{len:30, unit:'d'}, '90d':{len:90, unit:'d'} };
+      const {len, unit} = map[range] || map['7d'];
+      const labels = genLabels(len, unit);
+
+      const targetBase = randInt(7000, 12000);
+      const start = targetBase * rand(0.9, 1.1);
+      const revenue = meanRevertingSeries(len, start, targetBase, 0.18, 0.10, 2500, 30000);
+      const orders = Array.from({length:len}, ()=> randInt(60, 180));
+      const conv = Array.from({length:len}, ()=> Math.max(0.006, Math.min(0.08, rand(0.02, 0.06))));
+      const ticket = revenue.map((r,i)=> orders[i] ? r/orders[i] : r/100);
+
+      const categories = ['Eletrônicos','Moda','Casa','Esportes','Beleza','Games'].map(()=> randInt(150, 1100));
+      const payRaw = [randInt(45,70), randInt(20,40), randInt(5,20)];
+      const paySum = payRaw.reduce((a,b)=>a+b,0);
+      const payments = payRaw.map(v => Math.round(v/paySum*100));
+      const ops = ['Entrega','Qualidade','Suporte','SLA','Estoque'].map(()=> randInt(65,95));
+
+      return { labels, revenue, orders, conv, ticket, categories, payments, ops };
+    }
+
+    // Cores de tema
+    function themeColors(){
+      const s = getComputedStyle(document.documentElement);
+      return {
+        text: (s.getPropertyValue('--text')||'#e6edf3').trim(),
+        grid: (s.getPropertyValue('--border')||'#223147').trim(),
+        brand:(s.getPropertyValue('--brand')||'#4f8cff').trim(),
+        accent:(s.getPropertyValue('--accent')||'#22c55e').trim(),
+        warn: (s.getPropertyValue('--warn')||'#f59e0b').trim()
+      };
+    }
+
+    // Inicializa gráficos
+    function initCharts(){
+      const { text, grid, brand, accent, warn } = themeColors();
+
+      // Receita
+      const ctxRev = el('#chartRevenue').getContext('2d');
+      state.charts.revenue = new Chart(ctxRev, {
+        type:'line',
+        data:{ labels: state.data.labels, datasets:[
+          { label:'Receita', data: state.data.revenue, fill:true, borderColor: brand, backgroundColor: 'rgba(79,140,255,0.15)', tension:.35, pointRadius:0, borderWidth:2 }
+        ]},
+        options:{
+          responsive:true, maintainAspectRatio:false, animation:{ duration:500, easing:'easeOutQuart' },
+          scales:{
+            x:{ ticks:{ color:text }, grid:{ color:grid } },
+            y:{ beginAtZero:false, ticks:{ color:text, callback:v=>fmtBRL.format(v) }, grid:{ color:grid } }
+          },
+          plugins:{
+            legend:{ labels:{ color:text }},
+            tooltip:{ callbacks:{ label:(ctx)=> ` ${ctx.dataset.label}: ${fmtBRL.format(ctx.parsed.y)}` } }
+          }
+        }
+      });
+
+      // Pagamentos
+      const ctxPay = el('#chartPayments').getContext('2d');
+      state.charts.payments = new Chart(ctxPay, {
+        type:'doughnut',
+        data:{ labels: ['Cartão','PIX','Boleto'], datasets:[{
+          data: state.data.payments,
+          backgroundColor:[brand, accent, warn],
+          borderColor:'transparent'
+        }]},
+        options:{
+          responsive:true, maintainAspectRatio:false, animation:{ duration:500 },
+          plugins:{
+            legend:{ position:'bottom', labels:{ color:text } },
+            tooltip:{ callbacks:{ label:(ctx)=> ` ${ctx.label}: ${ctx.parsed}%` } }
+          },
+          cutout:'62%'
+        }
+      });
+
+      // Categorias
+      const ctxCat = el('#chartCategories').getContext('2d');
+      state.charts.categories = new Chart(ctxCat, {
+        type:'bar',
+        data:{ labels: ['Eletrônicos','Moda','Casa','Esportes','Beleza','Games'], datasets:[{
+          label:'Vendas', data: state.data.categories,
+          backgroundColor:'rgba(79,140,255,0.35)', borderColor:brand, borderWidth:1.5, borderRadius:8
+        }]},
+        options:{
+          responsive:true, maintainAspectRatio:false, animation:{ duration:500 },
+          scales:{
+            x:{ ticks:{ color:text }, grid:{ color:grid, display:false }},
+            y:{ ticks:{ color:text }, grid:{ color:grid } }
+          },
+          plugins:{ legend:{ labels:{ color:text } } }
+        }
+      });
+
+      // Radar Operacional
+      const ctxOps = el('#chartOps').getContext('2d');
+      state.charts.ops = new Chart(ctxOps, {
+        type:'radar',
+        data:{ labels: ['Entrega','Qualidade','Suporte','SLA','Estoque'], datasets:[{
+          label:'Índice', data: state.data.ops, fill:true,
+          backgroundColor:'rgba(34,197,94,0.20)', borderColor:accent, pointBackgroundColor:accent
+        }]},
+        options:{
+          responsive:true, maintainAspectRatio:false, animation:{ duration:500 },
+          scales:{ r:{ angleLines:{ color:grid }, grid:{ color:grid }, pointLabels:{ color:text }, ticks:{ display:false, backdropColor:'transparent' } } },
+          plugins:{ legend:{ labels:{ color:text } } }
+        }
+      });
+
+      // Sparklines KPIs
+      function sparkConfig(canvasId, color){
+        const ctx = el(canvasId).getContext('2d');
+        return new Chart(ctx, {
+          type:'line',
+          data:{ labels: state.data.labels, datasets:[{ data: [], borderColor:color, backgroundColor:'transparent', pointRadius:0, borderWidth:2, tension:.35 }]},
+          options:{
+            responsive:true, maintainAspectRatio:false, animation:false,
+            scales:{ x:{ display:false }, y:{ display:false } },
+            plugins:{ legend:{ display:false }, tooltip:{ enabled:false } }
+          }
+        });
+      }
+      state.charts.sparkRevenue = sparkConfig('#sparkRevenue', brand);
+      state.charts.sparkOrders  = sparkConfig('#sparkOrders',  '#22c55e');
+      state.charts.sparkConv    = sparkConfig('#sparkConv',    '#f59e0b');
+      state.charts.sparkTicket  = sparkConfig('#sparkTicket',  '#a78bfa');
+    }
+
+    // Aplica dados e estabiliza eixos
+    function applyDataToCharts(){
+      const { revenue, orders, conv, ticket, labels, categories, payments, ops } = state.data;
+      el('#revSub').textContent = ({'1d':'Últimas 24h','7d':'Últimos 7 dias','30d':'Últimos 30 dias','90d':'Últimos 90 dias'})[state.range];
+
+      // Faixa sugerida para Y (evita “afundar”)
+      const min = Math.min(...revenue);
+      const max = Math.max(...revenue);
+      const pad = Math.max(500, (max - min) * 0.25);
+      const yMin = Math.max(2000, Math.floor((min - pad)/100)*100);
+      const yMax = Math.ceil((max + pad)/100)*100;
+
+      // Receita
+      const chRev = state.charts.revenue;
+      chRev.data.labels = labels;
+      chRev.data.datasets[0].data = revenue;
+      chRev.options.scales.y.suggestedMin = yMin;
+      chRev.options.scales.y.suggestedMax = yMax;
+      chRev.update('none');
+
+      // Donut
+      const chPay = state.charts.payments;
+      chPay.data.datasets[0].data = payments;
+      chPay.update('none');
+
+      // Categorias
+      const chCat = state.charts.categories;
+      chCat.data.datasets[0].data = categories;
+      chCat.update('none');
+
+      // Radar
+      const chOps = state.charts.ops;
+      chOps.data.datasets[0].data = ops;
+      chOps.update('none');
+
+      // Sparklines
+      state.charts.sparkRevenue.data.labels = labels;
+      state.charts.sparkOrders.data.labels = labels;
+      state.charts.sparkConv.data.labels = labels;
+      state.charts.sparkTicket.data.labels = labels;
+
+      state.charts.sparkRevenue.data.datasets[0].data = revenue;
+      state.charts.sparkOrders.data.datasets[0].data  = orders;
+      state.charts.sparkConv.data.datasets[0].data    = conv.map(v=> Number((v*100).toFixed(2)));
+      state.charts.sparkTicket.data.datasets[0].data  = ticket;
+
+      state.charts.sparkRevenue.update('none');
+      state.charts.sparkOrders.update('none');
+      state.charts.sparkConv.update('none');
+      state.charts.sparkTicket.update('none');
+
+      // KPIs
+      const sumRev = revenue.reduce((a,b)=>a+b,0);
+      const sumOrders = orders.reduce((a,b)=>a+b,0);
+      const avgConv = conv.reduce((a,b)=>a+b,0)/conv.length;
+      const avgTicket = ticket.reduce((a,b)=>a+b,0)/ticket.length;
+
+      el('#kpiRevenue').textContent = fmtBRL.format(sumRev);
+      el('#kpiOrders').textContent = sumOrders.toLocaleString('pt-BR');
+      el('#kpiConv').textContent = fmtPct.format(avgConv);
+      el('#kpiTicket').textContent = fmtBRL.format(avgTicket);
+
+      // Deltas
+      function delta(arr){
+        if (arr.length < 2) return {v:0, dir:'flat'};
+        const a = arr[arr.length-2], b = arr[arr.length-1];
+        const d = a === 0 ? 0 : (b-a)/Math.abs(a);
+        return { v:d, dir: d>0?'up':(d<0?'down':'flat') };
+      }
+      const dRev = delta(revenue);
+      const dOrd = delta(orders);
+      const dCon = delta(conv);
+      const dTic = delta(ticket);
+
+      function setDelta(id, d){
+        const e = el(id);
+        e.className = 'kpi-delta ' + (d.dir==='up'?'up':(d.dir==='down'?'down':''));
+        e.textContent = (d.dir==='up'?'▲ ':(d.dir==='down'?'▼ ':'≈ ')) + fmtPct.format(d.v);
+      }
+      setDelta('#kpiRevenueDelta', dRev);
+      setDelta('#kpiOrdersDelta',  dOrd);
+      setDelta('#kpiConvDelta',    dCon);
+      setDelta('#kpiTicketDelta',  dTic);
+    }
+
+    // Atividades
+    const activityPool = [
+      'Novo pedido confirmado',
+      'Pagamento aprovado (Cartão)',
+      'Pagamento via PIX recebido',
+      'Boleto gerado',
+      'Cliente abriu ticket de suporte',
+      'Produto reposto em estoque',
+      'Pedido enviado ao transporte',
+      'Entrega realizada',
+      'Reembolso processado',
+      'Cupom aplicado em compra'
+    ];
+    function pushActivity(){
+      const list = el('#activityList');
+      const item = document.createElement('li');
+      const now = new Date();
+      const msg = activityPool[randInt(0, activityPool.length-1)];
+      const type = msg.includes('pedido') || msg.includes('Pedido') ? 'Pedido' :
+                  msg.includes('Pagamento') || msg.includes('PIX') || msg.includes('Boleto') ? 'Pagamento' : 'Operação';
+
+      item.innerHTML = `
+        <span class="badge">${now.toLocaleTimeString('pt-BR', {hour:'2-digit', minute:'2-digit'})}</span>
+        <span>${msg}</span>
+        <span class="badge" style="margin-left:auto">${type}</span>
+      `;
+      list.prepend(item);
+      const children = list.children;
+      if (children.length > 50) list.removeChild(children[children.length-1]);
+      el('#actCount').textContent = `${Math.min(children.length,50)} eventos`;
+    }
+
+    // Exportar CSV
+    function exportCSV(){
+      const { labels, revenue, orders } = state.data;
+      let csv = 'Período,Receita,Pedidos\n';
+      labels.forEach((l,i)=> csv += `${l},${revenue[i]},${orders[i]}\n`);
+      const blob = new Blob([csv], {type:'text/csv;charset=utf-8;'});
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url; a.download = `dashboard_${state.range}.csv`; a.click();
+      URL.revokeObjectURL(url);
+      toast('CSV exportado!');
+    }
+
+    // Atualização periódica com média de retorno
+    let timer = null;
+    function startRealtime(){
+      if (timer) clearInterval(timer);
+      timer = setInterval(()=>{
+        const len = state.data.labels.length;
+        if (!len) return;
+
+        const baseNow = Math.max(4000, Math.min(25000, (state.data.revenue.reduce((a,b)=>a+b,0)/len)));
+        const target = baseNow * (1 + 0.04*Math.sin(Date.now()/60000));
+
+        function stepMeanRevert(last, tgt, kappa=0.18, vol=0.06){
+          const shock = (Math.random()-0.5)*vol*tgt;
+          let v = last + kappa*(tgt - last) + shock;
+          v = Math.max(2500, Math.min(30000, v));
+          return Number(v.toFixed(2));
+        }
+
+        const lastRev = state.data.revenue[len-1];
+        const nextRev = stepMeanRevert(lastRev, target, 0.2, 0.08);
+
+        state.data.revenue.push(nextRev); state.data.revenue.shift();
+        state.data.orders.push(randInt(60, 180)); state.data.orders.shift();
+        state.data.conv.push(Math.max(0.006, Math.min(0.08, rand(0.02, 0.06)))); state.data.conv.shift();
+        state.data.ticket = state.data.revenue.map((r,i)=> state.data.orders[i] ? r/state.data.orders[i] : r/100);
+
+        state.data.categories = state.data.categories.map(v=> Math.max(120, Math.min(1500, v + randInt(-20, 20))));
+        let pays = state.data.payments.map(v=> Math.max(5, Math.min(90, v + randInt(-2,2))));
+        const s = pays.reduce((a,b)=>a+b,0); state.data.payments = pays.map(v=> Math.round(v/s*100));
+        state.data.ops = state.data.ops.map(v=> Math.max(55, Math.min(100, v + randInt(-2,2))));
+
+        applyDataToCharts();
+        if (Math.random() < 0.6) pushActivity();
+      }, 5000);
+    }
+
+    // Tema claro/escuro
+    function applyTheme(){
+      if (state.theme === 'light'){
+        document.documentElement.setAttribute('data-theme', 'light');
+        el('#iconMoon').style.display='none';
+        el('#iconSun').style.display='block';
+      } else {
+        document.documentElement.removeAttribute('data-theme');
+        el('#iconMoon').style.display='block';
+        el('#iconSun').style.display='none';
+      }
+    }
+    function toggleTheme(){
+      state.theme = state.theme === 'light' ? 'dark' : 'light';
+      localStorage.setItem('theme', state.theme);
+      applyTheme();
+      Object.values(state.charts).forEach(ch => ch.destroy());
+      initCharts();
+      applyDataToCharts();
+    }
+
+    // Range chips
+    function initRangeChips(){
+      el('#rangeChips').addEventListener('click', (e)=>{
+        const r = e.target?.dataset?.range;
+        if (!r) return;
+        state.range = r;
+        els('.chip', el('#rangeChips')).forEach(c => c.classList.toggle('active', c.dataset.range === r));
+        const gen = generateData(state.range);
+        state.data.labels     = gen.labels;
+        state.data.revenue    = gen.revenue;
+        state.data.orders     = gen.orders;
+        state.data.conv       = gen.conv;
+        state.data.ticket     = gen.ticket;
+        state.data.categories = gen.categories;
+        state.data.payments   = gen.payments;
+        state.data.ops        = gen.ops;
+        applyDataToCharts();
+        toast('Dados atualizados: ' + ({'1d':'Hoje','7d':'7 dias','30d':'30 dias','90d':'90 dias'}[state.range]));
+      });
+    }
+
+    // Sidebar responsiva
+    function sidebarControls(){
+      const btn = el('#collapseSidebar');
+      btn.addEventListener('click', ()=>{
+        if (window.innerWidth <= 900){
+          el('#sidebar').classList.toggle('open');
+          return;
+        }
+        const sb = el('#sidebar');
+        const wrap = el('.wrapper');
+        if (!sb.style.transform || sb.style.transform===''){
+          sb.style.transform = 'translateX(-100%)';
+          wrap.style.marginLeft = '0';
+        } else {
+          sb.style.transform = '';
+          wrap.style.marginLeft = '260px';
+        }
+      });
+    }
+
+    // Inicialização
+    function init(){
+      applyTheme();
+      el('#userName').textContent = 'bimadevfull';
+
+      const gen = generateData(state.range);
+      state.data.labels     = gen.labels;
+      state.data.revenue    = gen.revenue;
+      state.data.orders     = gen.orders;
+      state.data.conv       = gen.conv;
+      state.data.ticket     = gen.ticket;
+      state.data.categories = gen.categories;
+      state.data.payments   = gen.payments;
+      state.data.ops        = gen.ops;
+
+      initRangeChips();
+      sidebarControls();
+
+      el('#refreshBtn').addEventListener('click', ()=>{
+        const genN = generateData(state.range);
+        state.data.labels     = genN.labels;
+        state.data.revenue    = genN.revenue;
+        state.data.orders     = genN.orders;
+        state.data.conv       = genN.conv;
+        state.data.ticket     = genN.ticket;
+        state.data.categories = genN.categories;
+        state.data.payments   = genN.payments;
+        state.data.ops        = genN.ops;
+        applyDataToCharts();
+        pushActivity();
+        toast('Atualizado!');
+      });
+
+      el('#exportBtn').addEventListener('click', exportCSV);
+      el('#themeToggle').addEventListener('click', toggleTheme);
+      el('#logoutBtn').addEventListener('click', ()=> toast('Sessão encerrada (demo)'));
+      el('#searchInput').addEventListener('input', (e)=> {
+        if (e.target.value.trim().length>2){
+          toast('Buscando por: ' + e.target.value.trim());
+        }
+      });
+
+      initCharts();
+      applyDataToCharts();
+
+      for(let i=0;i<6;i++) pushActivity();
+
+      startRealtime();
+
+      document.addEventListener('keydown', (e)=>{ if(e.key==='Escape'){ el('#sidebar').classList.remove('open'); }});
+    }
+    document.addEventListener('DOMContentLoaded', init);
+  </script>
+</body>
+</html>
