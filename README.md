@@ -79,7 +79,7 @@ Para Gmail, crie uma **senha de app** e use-a em `SMTP_PASS`.
 Build command `npm install && npm run build` · Start command `npm start` · configure as variáveis do `.env` no painel.
 
 **Opção 2 — separado:**
-- Front na **Vercel/Netlify**: diretório raiz `client`, build `npm run build`, saída `dist`, variável `VITE_API_URL=https://sua-api...`.
+- Front na **Vercel**: diretório raiz `client`, build `npm run build`, saída `dist`, variável `VITE_API_URL=https://sua-api...`.
 - API no **Render/Railway**: diretório raiz `server`, start `npm start`, `CORS_ORIGIN=https://seu-site...`.
 
 ## 🛠️ Personalizando
