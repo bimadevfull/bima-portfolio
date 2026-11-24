@@ -1,4 +1,4 @@
-# 🚀 Bima Dev — Portfólio (React + Node.js)
+#  Bima Dev — Portfólio (React + Node.js)
 
 > Portfólio de **Abimael de Menezes Pedro** — Engenharia de Software · UI/UX · Customer Experience (CX).
 > Projeto de código aberto: fique à vontade para estudar, fazer fork e usar como base para o seu.
